@@ -5,7 +5,7 @@
 
 int main(void) {
     FileReader fileReader("/Users/Arco/Documents/Eigen documenten/Projecten/AdventOfCode2020/Day03/input.txt");
-    std::vector<std::string> input = fileReader.fileToVector("\n");
+    std::vector<std::string> input = fileReader.fileToVector('\n');
 
     TobogganRide ride;
     std::cout << "Puzzle one output: " << ride.countTrees(input, 3, 1) << std::endl;

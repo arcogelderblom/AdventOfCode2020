@@ -44,7 +44,7 @@ int puzzleTwo(std::vector<int> input) {
 
 int main(void) {
     FileReader fileReader("/Users/Arco/Documents/Eigen documenten/Projecten/AdventOfCode2020/Day01/input.txt");
-    std::vector<std::string> input = fileReader.fileToVector("\n");
+    std::vector<std::string> input = fileReader.fileToVector('\n');
     
     std::cout << "Puzzle one: " << puzzleOne(stringVecToIntVec(input)) << std::endl;
     std::cout << "Puzzle two: " << puzzleTwo(stringVecToIntVec(input)) << std::endl;

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <vector>
 
@@ -6,5 +8,6 @@ private:
     std::string _filePath;
 public:
     FileReader(std::string filePath);
-    std::vector<std::string> fileToVector(std::string delimiter);
+    std::vector<std::string> fileToVector(char delimiter);
+    std::vector<std::string> fileToVectorDoubleNewLine();
 };
