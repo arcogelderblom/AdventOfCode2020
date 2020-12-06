@@ -38,7 +38,7 @@ std::vector<std::string> FileReader::fileToVectorDoubleNewLine() {
                     completeLine = line;
                 }
                 else {
-                    completeLine += " " + line;
+                    completeLine += "\n" + line;
                 }
             }
         }

@@ -6,7 +6,12 @@
 int main(void) {
     FileReader fileReader("/Users/Arco/Documents/Eigen documenten/Projecten/AdventOfCode2020/Day04/input.txt");
     std::vector<std::string> input = fileReader.fileToVectorDoubleNewLine();
-    
+    for (std::string & line : input) {
+        while (line.find('\n') != std::string::npos) {
+            line.replace(line.find('\n'), 1, " ");   
+        }
+    }
+
     PassportValidator validator;
     int validPassports = 0;
     for (std::string passport : input) {
