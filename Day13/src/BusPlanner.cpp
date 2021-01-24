@@ -1,8 +1,8 @@
 #include "BusPlanner.hpp"
 
 #include <cmath>
+#include <numeric>
 #include <iostream>
-#include <map>
 
 BusPlanner::BusPlanner(std::string busIds) {
     while (busIds.find(',') != std::string::npos) {
@@ -46,40 +46,66 @@ long long BusPlanner::puzzleTwo() {
     std::map<int, int> busIdWithDelta;
     for (int i = 0; i < _busses.size(); i++) {
         if (_busses[i] != 0) {
-            busIdWithDelta[_busses[i]] = i;
+            busIdWithDelta[i] = _busses[i];
         }
     }
 
-    int maximumBusId = *std::max_element(_busses.begin(), _busses.end());
+//    BRUTE FORCE WAY
+//    long long startingPoint = 100000000000000;
+//    while(startingPoint % busIdWithDelta[0] != 0) {
+//        startingPoint++;
+//    }
+//
+//    for (long long currentTimeStamp = startingPoint; ; currentTimeStamp+=busIdWithDelta[0]) {
+//        std::cout << currentTimeStamp << std::endl;
+//        if (validateTimestamp(currentTimeStamp, busIdWithDelta)) {
+//            return currentTimeStamp;
+//        }
+//    }
 
-    std::vector<int> viableBusIds;
-    for (int busId : _busses) {
-        if (busId != 0) {
-            viableBusIds.push_back(busId);
-        }
-    }
-
-    long long startPoint;
-    for (startPoint= 100000000000000; ; startPoint++) {
-        if (startPoint%maximumBusId==0){
-            break;
-        }
-    }
-
-    for (long long minute = startPoint; ; minute += maximumBusId) {
-        int amountCorrect = 0;
-        for (int busId : viableBusIds) {
-            if ((minute - (busIdWithDelta[maximumBusId] - busIdWithDelta[busId])) % busId == 0) {
-                amountCorrect += 1;
+//  CHINESE REMAINDER THEOREM
+    long long sum = 0;
+    long long modulus = 1;
+    for (std::pair<int, int> pair : busIdWithDelta) {
+        int delta = pair.first;
+        int busId = pair.second;
+        modulus *= busId;
+        // euclidean algorithm
+        long long result = 1;
+        for (std::pair<int, int> _ : busIdWithDelta) {
+            if (_.second != busId) {
+                result *= _.second;
             }
-            else {
-                break;
-            }
         }
-        if (amountCorrect == viableBusIds.size()) {
-            return minute - busIdWithDelta[maximumBusId];
+
+        long long tmpLeft = busId;
+        long long tmpRight = result;
+        tmpLeft = busId * (tmpRight/busId);
+        while ((tmpLeft * -1) + tmpRight != 1 && tmpLeft + (tmpRight*-1) != 1 ) {
+            if (tmpRight < tmpLeft) {
+                tmpRight += result;
+                tmpLeft = busId * (tmpRight/busId);
+            }
+            tmpLeft += busId;
+        }
+
+        if (tmpRight < tmpLeft) {
+            tmpRight *= -1;
+        }
+        sum += ((delta == 0) ? 0 : busId - delta) * tmpRight;
+    }
+
+    // for some reason this modulus operation does not work but entering it in Wolfram Alpha gives the correct solution
+    // https://www.wolframalpha.com/input/?i=-1585103355284813842%252384517360007913
+    std::cout << std::endl << sum << " % " << modulus << " = " << sum%modulus << std::endl;
+    return sum % modulus;
+}
+
+bool BusPlanner::validateTimestamp(long long int timestamp, std::map<int, int> busIdWithDelta) {
+    for (std::pair<int, int> busIdAndDelta : busIdWithDelta) {
+        if (((timestamp + busIdAndDelta.first) % busIdAndDelta.second) != 0) {
+            return false;
         }
     }
-    
-    return 0;
+    return true;
 }
