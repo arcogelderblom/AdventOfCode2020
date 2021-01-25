@@ -102,7 +102,7 @@ void Floor::applyInstruction(std::string instruction) {
 #include <iostream>
 void Floor::processDays(int days) {
     for (int day = 1; day <= days; day++) {
-        std::map<HexTileCoordinate, HexTile> newFloor = _floor;
+        std::map<HexTileCoordinate, HexTile> newFloor;
         for (std::pair<HexTileCoordinate, HexTile> coordinate : _floor) {
             HexTile currentTile = _floor[coordinate.first];
             checkAdjacentTiles(currentTile, newFloor);
@@ -114,137 +114,45 @@ void Floor::processDays(int days) {
 
 void Floor::checkAdjacentTiles(HexTile currentTile, std::map<HexTileCoordinate, HexTile> & newFloor, int depth) {
     int maxDepth = 1;
-    std::vector<TileColor> neighbouringColors;
+    if (depth > maxDepth) {
+        return; // maxDepth reached
+    }
+
     HexTileCoordinate newCoordinate = currentTile.getCoordinate();
-    if (currentTile.e == nullptr) {
-        newCoordinate._q += 1;
-        newCoordinate._s -= 1;
-        if (_floor.find(newCoordinate) == _floor.end()) {
-            neighbouringColors.push_back(TileColor::White);
-            HexTile newTile(newCoordinate);
-            newFloor[newCoordinate] = newTile;
-            if (depth < maxDepth) {
-                checkAdjacentTiles(newTile, newFloor, depth+1);
-            }
-            currentTile.e = &newFloor[newCoordinate];
-        }
-        else {
-            currentTile.e = &_floor[newCoordinate];
-            neighbouringColors.push_back(currentTile.e->getColor());
-        }
-    }
-    else {
-        neighbouringColors.push_back(currentTile.e->getColor());
+    if (newFloor.find(newCoordinate) != newFloor.end()) {
+        return; // this tile is already tried
     }
 
-    newCoordinate = currentTile.getCoordinate();
-    if (currentTile.se == nullptr) {
-        newCoordinate._r += 1;
-        newCoordinate._s -= 1;
-        if (_floor.find(newCoordinate) == _floor.end()) {
-            neighbouringColors.push_back(TileColor::White);
-            HexTile newTile(newCoordinate);
-            newFloor[newCoordinate] = newTile;
-            if (depth < maxDepth) {
-                checkAdjacentTiles(newTile, newFloor, depth+1);
-            }
-            currentTile.se = &newFloor[newCoordinate];
-        }
-        else {
-            currentTile.se = &_floor[newCoordinate];
-            neighbouringColors.push_back(currentTile.se->getColor());
-        }
-    }
-    else {
-        neighbouringColors.push_back(currentTile.se->getColor());
-    }
+    HexTileCoordinate e = newCoordinate;
+    e._q += 1;
+    e._s -= 1;
+    HexTileCoordinate se = newCoordinate;
+    se._r += 1;
+    se._s -= 1;
+    HexTileCoordinate sw = newCoordinate;
+    sw._q -= 1;
+    sw._r += 1;
+    HexTileCoordinate w = newCoordinate;
+    w._q -= 1;
+    w._s += 1;
+    HexTileCoordinate nw = newCoordinate;
+    nw._r -= 1;
+    nw._s += 1;
+    HexTileCoordinate ne = newCoordinate;
+    ne._q += 1;
+    ne._r -= 1;
 
-    newCoordinate = currentTile.getCoordinate();
-    if (currentTile.sw == nullptr) {
-        newCoordinate._q -= 1;
-        newCoordinate._r += 1;
-        if (_floor.find(newCoordinate) == _floor.end()) {
+    std::vector<TileColor> neighbouringColors;
+    std::vector<HexTileCoordinate> neighbours = {e, se, sw, w, nw, ne};
+    for (HexTileCoordinate coordinate : neighbours) {
+        if (_floor.find(coordinate) == _floor.end()) {
+            HexTile newTile(coordinate);
+            checkAdjacentTiles(newTile, newFloor, depth+1);
             neighbouringColors.push_back(TileColor::White);
-            HexTile newTile(newCoordinate);
-            newFloor[newCoordinate] = newTile;
-            if (depth < maxDepth) {
-                checkAdjacentTiles(newTile, newFloor, depth+1);
-            }
-            currentTile.sw = &newFloor[newCoordinate];
         }
         else {
-            currentTile.sw = &_floor[newCoordinate];
-            neighbouringColors.push_back(currentTile.sw->getColor());
+            neighbouringColors.push_back(_floor[coordinate].getColor());
         }
-    }
-    else {
-        neighbouringColors.push_back(currentTile.sw->getColor());
-    }
-
-    newCoordinate = currentTile.getCoordinate();
-    if (currentTile.w == nullptr) {
-        newCoordinate._q -= 1;
-        newCoordinate._s += 1;
-        if (_floor.find(newCoordinate) == _floor.end()) {
-            neighbouringColors.push_back(TileColor::White);
-            HexTile newTile(newCoordinate);
-            newFloor[newCoordinate] = newTile;
-            if (depth < maxDepth) {
-                checkAdjacentTiles(newTile, newFloor, depth+1);
-            }
-            currentTile.w = &newFloor[newCoordinate];
-        }
-        else {
-            currentTile.w = &_floor[newCoordinate];
-            neighbouringColors.push_back(currentTile.w->getColor());
-        }
-    }
-    else {
-        neighbouringColors.push_back(currentTile.w->getColor());
-    }
-
-    newCoordinate = currentTile.getCoordinate();
-    if (currentTile.nw == nullptr) {
-        newCoordinate._r -= 1;
-        newCoordinate._s += 1;
-        if (_floor.find(newCoordinate) == _floor.end()) {
-            neighbouringColors.push_back(TileColor::White);
-            HexTile newTile(newCoordinate);
-            newFloor[newCoordinate] = newTile;
-            if (depth < maxDepth) {
-                checkAdjacentTiles(newTile, newFloor, depth+1);
-            }
-            currentTile.nw = &newFloor[newCoordinate];
-        }
-        else {
-            currentTile.nw = &_floor[newCoordinate];
-            neighbouringColors.push_back(currentTile.nw->getColor());
-        }
-    }
-    else {
-        neighbouringColors.push_back(currentTile.nw->getColor());
-    }
-
-    newCoordinate = currentTile.getCoordinate();
-    if (currentTile.ne == nullptr) {
-        newCoordinate._q += 1;
-        newCoordinate._r -= 1;
-        if (_floor.find(newCoordinate) == _floor.end()) {
-            neighbouringColors.push_back(TileColor::White);
-            HexTile newTile(newCoordinate);
-            newFloor[newCoordinate] = newTile;
-            if (depth < maxDepth) {
-                checkAdjacentTiles(newTile, newFloor, depth+1);
-            }
-            currentTile.ne = &newFloor[newCoordinate];
-        }
-        else {
-            currentTile.ne = &_floor[newCoordinate];
-            neighbouringColors.push_back(currentTile.ne->getColor());
-        }
-    }
-    else {
-        neighbouringColors.push_back(currentTile.ne->getColor());
     }
 
     int amountBlack = std::count_if(neighbouringColors.begin(), neighbouringColors.end(), [](TileColor tileColor){ return tileColor == TileColor::Black; });
@@ -255,7 +163,12 @@ void Floor::checkAdjacentTiles(HexTile currentTile, std::map<HexTileCoordinate, 
         currentTile.flip();
     }
 
-    newFloor[currentTile.getCoordinate()] = currentTile;
+    if (currentTile.getColor() == TileColor::Black) {
+        newFloor[currentTile.getCoordinate()] = currentTile;
+    }
+    else {
+        newFloor.erase(currentTile.getCoordinate());
+    }
 }
 
 std::vector<HexTile*> Floor::getBlackTiles() {

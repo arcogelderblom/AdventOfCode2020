@@ -1,7 +1,5 @@
 #include <iostream>
 
-#include <sstream>
-
 #include "FileReader.hpp"
 #include "Floor.hpp"
 
