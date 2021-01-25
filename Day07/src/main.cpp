@@ -12,9 +12,4 @@ int main(void) {
     std::cout << "Puzzle one output: " << processor.getColorPossibilitiesFor("shiny gold") << std::endl;
     
     std::cout << "Puzzle two output: " << processor.getAmountBagsInBag("shiny gold") << std::endl;
-    // sum = 0;
-    // for (std::string groupAnswers : input) {
-    //     sum += processor.processGroup(groupAnswers, true);
-    // }
-    // std::cout << "Puzzle two output: " << sum << std::endl;
 }

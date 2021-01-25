@@ -84,27 +84,18 @@ int LuggageProcessor::getColorPossibilitiesFor(std::string color) {
 }
 
 int LuggageProcessor::getAmountBagsInBag(std::string color) {
-    std::vector<std::vector<Bag>> allLayers;
-    
-    std::vector<Bag> layer;
+    int containingBagsAmount = 0;
     for (Bag bag : _bags) {
         if (bag.getColor() == color) {
-            layer.push_back(bag);
-        }
-    }
-    result.push_back(layer);
-
-
-    std::vector<Bag> layer;
-    for (Bag layerBag : layer) {
-        for (std::pair<Bag,int> containendBag : layerBag.getContainingBags()) {
-            for (Bag bag : _bags) {
-                if (bag.getColor() == containendBag.first.getColor()) {
-                    result.push_back(layer);
-                }
+            if (bag.getContainingBags().empty()) {
+                return 0;
+            }
+            for (std::pair<Bag, int> containingBag : bag.getContainingBags()) {
+                containingBagsAmount += containingBag.second;
+                containingBagsAmount += containingBag.second * getAmountBagsInBag(containingBag.first.getColor());
             }
         }
     }
-    result.push_back(layer);
 
+    return containingBagsAmount;
 }
