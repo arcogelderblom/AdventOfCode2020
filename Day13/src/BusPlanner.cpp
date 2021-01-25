@@ -95,10 +95,7 @@ long long BusPlanner::puzzleTwo() {
         sum += ((delta == 0) ? 0 : busId - delta) * tmpRight;
     }
 
-    // for some reason this modulus operation does not work but entering it in Wolfram Alpha gives the correct solution
-    // https://www.wolframalpha.com/input/?i=-1585103355284813842%252384517360007913
-    std::cout << std::endl << sum << " % " << modulus << " = " << sum%modulus << std::endl;
-    return sum % modulus;
+    return (sum % modulus + modulus) % modulus;
 }
 
 bool BusPlanner::validateTimestamp(long long int timestamp, std::map<int, int> busIdWithDelta) {
